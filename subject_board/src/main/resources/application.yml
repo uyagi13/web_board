@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mariadb://192.168.65.128:3306/board
+    url: jdbc:mariadb://192.168.1.235:3306/board?useUnicode=true&characterEncoding=utf8
     username: boarduse
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
@@ -10,5 +10,16 @@ spring:
       ddl-auto: none
     show-sql: true
 
+app:
+  jwt:
+     secret: "CHANGE_ME_TO_LONG_RANDOM_SECRET_AT_LEAST_64_CHARS________________________"
+     accessMinutes: 60
+     refreshDays: 14
+  file:
+     uploadDir: /tmp/subject_board/uploads
 server:
   port: 8080
+logging:
+  level:
+    root: INFO
+    org.springframework.security: DEBUG
