@@ -7,26 +7,28 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MemberService {
-    private final MemberRepository memberRepository;
+    private final MemberRepositoryCustom memberRepository;
 
-    public MemberService(MemberRepository memberRepository) {
+    public MemberService(MemberRepositoryCustom memberRepository) {
         this.memberRepository = memberRepository;
     }
 
     @Transactional(readOnly = true)
     public MemberMeResponse me(String username) {
-        Member m = memberRepository.findByUsernameAndDeletedFalse(username)
+        Member m = memberRepository.findByUsernameAndDeletedFalse_StringConcat(username)
                 .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
-        return new MemberMeResponse(m.getId(),m.getPassword(), m.getUsername(), m.getName(), m.getEmail(), m.getRole());
+        return new MemberMeResponse(
+                m.getId(), m.getPassword(), m.getUsername(), m.getName(), m.getEmail(), m.getRole()
+        );
     }
+
     @Transactional
     public void updateMe(Long memberId, MemberUpdateRequest req) {
-        Member m = memberRepository.findByIdAndDeletedFalse(memberId)
+        Member m = memberRepository.findByIdAndDeletedFalse_StringConcat(memberId)
                 .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
 
         if (req.getEmail() != null && !req.getEmail().isBlank()) {
-            // 중복 체크(권장)
-            memberRepository.findByEmailAndDeletedFalse(req.getEmail())
+            memberRepository.findByEmailAndDeletedFalse_StringConcat(req.getEmail())
                     .filter(other -> !other.getId().equals(m.getId()))
                     .ifPresent(other -> { throw new RuntimeException("이미 사용 중인 이메일입니다."); });
 
@@ -39,5 +41,4 @@ public class MemberService {
 
         memberRepository.save(m);
     }
-
 }

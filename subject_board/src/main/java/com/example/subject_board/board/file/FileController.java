@@ -27,29 +27,26 @@ public class FileController {
                        @RequestParam("file") MultipartFile file) throws Exception {
         return fileService.upload(postId, file);
     }
+    
     @GetMapping("/posts/{postId}")
     public List<FileItemRes> list(@PathVariable Long postId) {
         return fileService.listByPost(postId);
     }
     
-    @GetMapping("/{fileId}")
-    public ResponseEntity<Resource> download(@PathVariable Long fileId) {
-        BoardFile file = fileService.getFile(fileId);
-        Resource resource = fileService.getResource(file);
+ 
 
-        String encodedName = UriUtils.encode(
-            file.getOriginalName(),
-            StandardCharsets.UTF_8
-        );
-
+    @GetMapping("/path")
+    public ResponseEntity<Resource> downloadByPath(@RequestParam("file") String filePath) {
+        Resource resource = fileService.getFileByPath(filePath);
+        
         return ResponseEntity.ok()
-            .header(
-                HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename*=UTF-8''" + encodedName
-            )
-            .contentType(MediaType.APPLICATION_OCTET_STREAM)
-            .contentLength(file.getFileSize())
-            .body(resource);
+                .header(
+                    HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename*=UTF-8''" + filePath
+                )
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+
     }
 
 }

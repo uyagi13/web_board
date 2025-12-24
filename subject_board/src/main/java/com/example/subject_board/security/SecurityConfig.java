@@ -1,6 +1,6 @@
 package com.example.subject_board.security;
 
-import com.example.subject_board.auth.jwt.JwtAuthFilter;
+import org.springframework.boot.tomcat.servlet.TomcatServletWebServerFactory;
 import org.springframework.context.annotation.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,6 +11,12 @@ import org.springframework.security.web.*;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.*;
 
+import com.example.subject_board.auth.jwt.JwtAuthFilter;
+
+import org.apache.catalina.Context;
+import org.apache.tomcat.util.scan.StandardJarScanner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import java.util.List;
 
 @Configuration
@@ -27,7 +33,16 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return NoOpPasswordEncoder.getInstance();
     }
-
+ // 톰캣의 URL 정규화 비활성화
+    @Bean
+    public TomcatServletWebServerFactory tomcatFactory() {
+        return new TomcatServletWebServerFactory() {
+            @Override
+            protected void postProcessContext(Context context) {
+                ((StandardJarScanner) context.getJarScanner()).setScanManifest(false);
+            }
+        };
+    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -38,6 +53,13 @@ public class SecurityConfig {
         http.sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.authorizeHttpRequests(auth -> auth
+        		   .requestMatchers(
+        			        "/", "/index.html", "/favicon.ico",
+        			        "/assets/**",
+        			        "/*.js", "/*.css", "/*.map",
+        			        "/vite.svg"
+        			    ).permitAll()
+
         	    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
         	    .requestMatchers("/api/member/me").authenticated()
 
@@ -54,11 +76,11 @@ public class SecurityConfig {
         	    .requestMatchers(HttpMethod.POST, "/api/posts/**").permitAll()
         	    .requestMatchers(HttpMethod.GET, "/api/files/**").permitAll()
         	    .requestMatchers(HttpMethod.POST, "/api/files/**").permitAll()
-
+        	    .requestMatchers(HttpMethod.GET, "/**").permitAll()
         	    .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
 
 
-        	    .anyRequest().authenticated()
+        	    //.anyRequest().authenticated()
         	);
 
 
@@ -68,7 +90,8 @@ public class SecurityConfig {
 
         // ✅ JWT 필터 체인에 등록 (중요)
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
+        
+        
         return http.build();
     }
 

@@ -1,133 +1,199 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.0</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>subject_board</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>subject_board</name>
-	<description>Demo project for Spring Boot</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
-	<properties>
-		<java.version>17</java.version>
-	</properties>
-	<dependencies>
-	  <!-- JPA -->
-	  <dependency>
-	    <groupId>org.springframework.boot</groupId>
-	    <artifactId>spring-boot-starter-data-jpa</artifactId>
-	  </dependency>
-	
-	  <!-- WebMVC (Boot4 권장) -->
-	  <dependency>
-	    <groupId>org.springframework.boot</groupId>
-	    <artifactId>spring-boot-starter-webmvc</artifactId>
-	  </dependency>
-	
-	  <!-- Security -->
-	  <dependency>
-	    <groupId>org.springframework.boot</groupId>
-	    <artifactId>spring-boot-starter-security</artifactId>
-	  </dependency>
-	
-	  <!-- Validation -->
-	  <dependency>
-	    <groupId>org.springframework.boot</groupId>
-	    <artifactId>spring-boot-starter-validation</artifactId>
-	  </dependency>
-	
-	  <!-- MariaDB -->
-	  <dependency>
-	    <groupId>org.mariadb.jdbc</groupId>
-	    <artifactId>mariadb-java-client</artifactId>
-	    <scope>runtime</scope>
-	  </dependency>
-	
-	  <!-- Lombok -->
-	  <dependency>
-	    <groupId>org.projectlombok</groupId>
-	    <artifactId>lombok</artifactId>
-	    <optional>true</optional>
-	  </dependency>
-	
-	  <!-- JWT (jjwt) -->
-	  <dependency>
-	    <groupId>io.jsonwebtoken</groupId>
-	    <artifactId>jjwt-api</artifactId>
-	    <version>0.11.5</version>
-	  </dependency>
-	  <dependency>
-	    <groupId>io.jsonwebtoken</groupId>
-	    <artifactId>jjwt-impl</artifactId>
-	    <version>0.11.5</version>
-	    <scope>runtime</scope>
-	  </dependency>
-	  <dependency>
-	    <groupId>io.jsonwebtoken</groupId>
-	    <artifactId>jjwt-jackson</artifactId>
-	    <version>0.11.5</version>
-	    <scope>runtime</scope>
-	  </dependency>
-	
-	  <!-- Test -->
-	  <dependency>
-	    <groupId>org.springframework.boot</groupId>
-	    <artifactId>spring-boot-starter-test</artifactId>
-	    <scope>test</scope>
-	  </dependency>
-	  <dependency>
-	    <groupId>org.springframework.boot</groupId>
-	    <artifactId>spring-boot-starter-webmvc-test</artifactId>
-	    <scope>test</scope>
-	  </dependency>
-</dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+  <modelVersion>4.0.0</modelVersion>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<annotationProcessorPaths>
-						<path>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</path>
-					</annotationProcessorPaths>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>4.0.0</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>com.example</groupId>
+  <artifactId>subject_board</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>subject_board</name>
+  <description>Demo project for Spring Boot</description>
+
+  <properties>
+    <java.version>17</java.version>
+
+    <!-- 프론트 빌드 결과(dist)가 있는 실제 경로 -->
+    <frontend.dir>/home/tmdwo/web_board/front_re_vite</frontend.dir>
+    <frontend.dist>${frontend.dir}/dist</frontend.dist>
+
+    <!-- Spring이 서빙할 정적 리소스 경로 -->
+    <frontend.target.static>${project.basedir}/src/main/resources/static</frontend.target.static>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-validation</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mariadb.jdbc</groupId>
+      <artifactId>mariadb-java-client</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-api</artifactId>
+      <version>0.11.5</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-impl</artifactId>
+      <version>0.11.5</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.jsonwebtoken</groupId>
+      <artifactId>jjwt-jackson</artifactId>
+      <version>0.11.5</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </path>
+          </annotationProcessorPaths>
+        </configuration>
+      </plugin>
+
+      <!-- 1) 프론트 빌드 -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+
+          <execution>
+            <id>frontend-npm-install</id>
+            <phase>prepare-package</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <workingDirectory>${frontend.dir}</workingDirectory>
+              <executable>npm</executable>
+              <arguments>
+                <argument>install</argument>
+              </arguments>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>frontend-npm-build</id>
+            <phase>prepare-package</phase>
+            <goals><goal>exec</goal></goals>
+            <configuration>
+              <workingDirectory>${frontend.dir}</workingDirectory>
+              <executable>npm</executable>
+              <arguments>
+                <argument>run</argument>
+                <argument>build</argument>
+              </arguments>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+
+      <!-- 2) static 정리 + dist 복사 (확실한 antrun copy) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>sync-frontend-into-static</id>
+            <phase>prepare-package</phase>
+            <goals><goal>run</goal></goals>
+            <configuration>
+              <target>
+                <echo>== FRONTEND DIST: ${frontend.dist}</echo>
+                <echo>== STATIC TARGET: ${frontend.target.static}</echo>
+
+                <mkdir dir="${frontend.target.static}"/>
+
+                <!-- 내부 파일만 삭제 (윈도우 잠금 대비) -->
+                <delete includeemptydirs="true" failonerror="false">
+                  <fileset dir="${frontend.target.static}">
+                    <include name="**/*"/>
+                  </fileset>
+                </delete>
+
+                <!-- dist -> static 복사 -->
+                <copy todir="${frontend.target.static}" overwrite="true" failonerror="true">
+                  <fileset dir="${frontend.dist}"/>
+                </copy>
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Spring Boot 패키징 -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
 
 </project>

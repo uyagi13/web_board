@@ -14,4 +14,6 @@ public interface FileRepository extends JpaRepository<BoardFile, Long> {
 
     // ✅ 게시글 첨부파일 목록
     List<BoardFile> findByPost_IdAndDeletedFalseOrderByIdDesc(Long postId);
+
+	List<BoardFile> findByOriginalName(String originalName);
 }

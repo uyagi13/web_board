@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.HtmlUtils;  // HTML 이스케이핑 기능
 
 @Service
 public class PostService {
@@ -32,14 +33,14 @@ public class PostService {
             .map(p -> new PostListItemRes(
                 p.getId(),
                 p.getAuthor().getId(),
-                p.getAuthor().getName(),
-                p.getTitle(),
+                // XSS 취약점: HTML 이스케이핑 제거
+                removeHtmlEscaping(p.getAuthor().getName()),  // 취약점 추가
+                removeHtmlEscaping(p.getTitle()),  // 취약점 추가
                 p.getViewCount(),
                 p.isSecret(),
                 p.getCreatedAt()
             ));
     }
-
 
     @Transactional
     public PostDetailRes get(Long postId) {
@@ -65,9 +66,10 @@ public class PostService {
         return new PostDetailRes(
                 p.getId(),
                 p.getAuthor().getId(),
-                p.getAuthor().getName(),
-                p.getTitle(),
-                p.getContent(),
+                // XSS 취약점: HTML 이스케이핑 제거
+                removeHtmlEscaping(p.getAuthor().getName()),  // 취약점 추가
+                removeHtmlEscaping(p.getTitle()),  // 취약점 추가
+                removeHtmlEscaping(p.getContent()),  // 취약점 추가 - 이스케이핑 제거
                 p.getViewCount(),
                 p.isSecret(),
                 p.getCreatedAt(),
@@ -84,8 +86,9 @@ public class PostService {
 
         BoardPost p = new BoardPost();
         p.setAuthor(author);
-        p.setTitle(req.getTitle());
-        p.setContent(req.getContent());
+        // XSS 취약점: 사용자 입력값 검증 없이 저장
+        p.setTitle(req.getTitle());  // 악성 스크립트 그대로 저장
+        p.setContent(req.getContent());  // 악성 스크립트 그대로 저장
         p.setSecret(req.isSecret());
         p.setDeleted(false);
         p.setViewCount(0);
@@ -105,8 +108,9 @@ public class PostService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "forbidden");
         }
 
-        p.setTitle(req.getTitle());
-        p.setContent(req.getContent());
+        // XSS 취약점: 사용자 입력값 검증 없이 저장
+        p.setTitle(req.getTitle());  // 악성 스크립트 그대로 저장
+        p.setContent(req.getContent());  // 악성 스크립트 그대로 저장
         p.setSecret(req.isSecret());
     }
 
@@ -125,7 +129,32 @@ public class PostService {
         p.setDeleted(true);
     }
 
-    // ===== 인증 유틸 =====
+    // ===== XSS 취약점을 추가하는 헬퍼 메서드 =====
+    
+    /**
+     * HTML 이스케이핑을 제거하는 메서드 (XSS 취약점 생성)
+     * 실제 코드에서 이 메서드를 사용하면 안됩니다!
+     */
+    private String removeHtmlEscaping(String input) {
+        if (input == null) return null;
+        
+        // 이미 이스케이핑된 문자를 원래 문자로 변환 (취약점)
+        return input
+            .replace("&lt;", "<")
+            .replace("&gt;", ">")
+            .replace("&quot;", "\"")
+            .replace("&#39;", "'")
+            .replace("&amp;", "&");
+    }
+    
+    /**
+     * 위험: Spring의 HtmlUtils를 사용하지 않고 직접 반환 (XSS 취약)
+     */
+    private String dangerouslyReturnUnescaped(String input) {
+        return input;  // 아무 처리 없이 반환 (실제로 이렇게 하면 XSS 취약)
+    }
+
+    // ===== 인증 유틸 (기존과 동일) =====
 
     private MemberPrincipal requireLogin() {
         MemberPrincipal me = currentPrincipalOrNull();
