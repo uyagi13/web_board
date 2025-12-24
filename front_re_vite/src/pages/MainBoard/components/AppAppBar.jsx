@@ -16,7 +16,9 @@ import ColorModeIconDropdown from '../../../shared-theme/ColorModeIconDropdown';
 import SitemarkIcon from './SitemarkIcon';
 import { useNavigate } from 'react-router-dom';
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8080';
+const API_BASE =
+  import.meta.env.VITE_API_BASE ||
+  window.location.origin;
 
 const StyledToolbar = styled(Toolbar)(({ theme }) => ({
   display: 'flex',
@@ -143,9 +145,6 @@ export default function AppAppBar() {
             <Button variant="text" color="info" size="small" onClick={go('/board')}>
               게시판
             </Button>
-            <Button variant="text" color="info" size="small" onClick={go('/board')}>
-              공지
-            </Button>
 
             <Box sx={{ width: 12 }} />
 
@@ -181,71 +180,6 @@ export default function AppAppBar() {
                 </Button>
               </>
             )}
-
-            <ColorModeIconDropdown />
-          </Box>
-
-          {/* Mobile */}
-          <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
-            <ColorModeIconDropdown size="medium" />
-            <IconButton aria-label="Menu button" onClick={toggleDrawer(true)}>
-              <MenuIcon />
-            </IconButton>
-
-            <Drawer
-              anchor="top"
-              open={open}
-              onClose={toggleDrawer(false)}
-              PaperProps={{ sx: { top: 'var(--template-frame-height, 0px)' } }}
-            >
-              <Box sx={{ p: 2, backgroundColor: 'background.default' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                  <IconButton onClick={toggleDrawer(false)}>
-                    <CloseRoundedIcon />
-                  </IconButton>
-                </Box>
-
-                <MenuItem onClick={go('/board')}>게시판</MenuItem>
-                <MenuItem onClick={go('/board')}>공지</MenuItem>
-
-                <Divider sx={{ my: 2 }} />
-
-                {isLoggedIn ? (
-                  <>
-                    <MenuItem disabled>
-                      <Typography color="info" sx={{ fontWeight: 800 }}>
-                        {meLoading ? '로딩...' : displayName}
-                      </Typography>
-                    </MenuItem>
-
-                    {/* ✅ 회원정보 수정 */}
-                    <MenuItem onClick={go('/member/edit')}>회원정보 수정</MenuItem>
-
-                    {/* ✅ 관리자 전용 */}
-                    {isAdmin && <MenuItem onClick={go('/admin')}>관리자 페이지</MenuItem>}
-
-                    <MenuItem>
-                      <Button color="primary" variant="outlined" fullWidth onClick={logout}>
-                        로그아웃
-                      </Button>
-                    </MenuItem>
-                  </>
-                ) : (
-                  <>
-                    <MenuItem>
-                      <Button color="primary" variant="contained" fullWidth onClick={go('/signup')}>
-                        회원가입
-                      </Button>
-                    </MenuItem>
-                    <MenuItem>
-                      <Button color="primary" variant="outlined" fullWidth onClick={go('/signin')}>
-                        로그인
-                      </Button>
-                    </MenuItem>
-                  </>
-                )}
-              </Box>
-            </Drawer>
           </Box>
         </StyledToolbar>
       </Container>

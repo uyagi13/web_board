@@ -20,6 +20,11 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import { useNavigate } from "react-router-dom";
 
+
+const API_BASE =
+  import.meta.env.VITE_API_BASE ||
+  window.location.origin;
+  
 export default function BoardList() {
   const [q, setQ] = React.useState('');
   const [page, setPage] = React.useState(1); // UI는 1-base
@@ -48,7 +53,7 @@ export default function BoardList() {
         params.set('page', String(page - 1)); // ✅ 백은 0-base
         params.set('size', '10');
 
-       const res = await fetch(`http://localhost:8080/api/posts?${params.toString()}`, {
+       const res = await fetch(`${API_BASE}/api/posts?${params.toString()}`, {
         method: 'GET',
         signal: controller.signal,
         headers: { Accept: 'application/json' },
@@ -91,7 +96,7 @@ export default function BoardList() {
         <Box>
           <Typography variant="h4" sx={{ fontWeight: 800 }}>게시판</Typography>
           <Typography variant="body2" color="text.secondary">
-            최신 글을 확인하고, 필요한 글을 검색하세요.
+            자유게시판입니다
           </Typography>
         </Box>
 
@@ -102,12 +107,8 @@ export default function BoardList() {
 
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}
         sx={{ alignItems: { sm: 'center' }, justifyContent: 'space-between' }}>
-        <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: 'wrap' }}>
-          <Chip label="전체" variant="filled" />
-          <Chip label="공지" variant="outlined" />
-          <Chip label="자유" variant="outlined" />
-          <Chip label="질문" variant="outlined" />
-        </Stack>
+  
+    
 
         <FormControl sx={{ width: { xs: '100%', sm: '320px' } }} variant="outlined">
           <OutlinedInput
@@ -162,7 +163,7 @@ export default function BoardList() {
                 <TableRow key={p.id} hover onClick={() => onClickRow(p.id)} sx={{ cursor: 'pointer' }}>
                   <TableCell>{p.id}</TableCell>
                   <TableCell sx={{ fontWeight: 600 }}>{p.title}</TableCell>
-                  <TableCell>{p.authorName /* PostListItemRes에 있는 필드명에 맞춰 */}</TableCell>
+                  <TableCell>{p.authorName }</TableCell>
                   <TableCell>{String(p.createdAt).slice(0, 10)}</TableCell>
                   <TableCell align="right">{p.viewCount}</TableCell>
                 </TableRow>

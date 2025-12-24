@@ -13,7 +13,7 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8080";
+const API_BASE = import.meta.env.VITE_API_BASE || "http://192.168.1.235:8080";
 
 export default function MemberEdit() {
   const navigate = useNavigate();
@@ -250,9 +250,6 @@ export default function MemberEdit() {
             )}
 
             <Divider />
-
-            {/* ================= 하단 공통 버튼 ================= */}
-            {/* ✅ 언제든 게시판으로 이동 */}
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <Button
                 variant="outlined"

@@ -12,7 +12,9 @@ import CircularProgress from "@mui/material/CircularProgress";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import Alert from "@mui/material/Alert";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8080";
+const API_BASE =
+  import.meta.env.VITE_API_BASE ||
+  window.location.origin;
 
 function formatBytes(bytes) {
   if (!Number.isFinite(bytes)) return "";
@@ -111,18 +113,27 @@ export default function PostDetail() {
         });
 
         if (!res.ok) {
-          const text = await res.text();
-          throw new Error(`글 조회 실패: ${res.status} ${text}`);
-        }
+              if (res.status === 401) {
+                throw new Error("비밀글입니다. 작성자 또는 관리자만 열람할 수 있습니다.");
+              }
+
+              // 글이 아예 없을 때
+              if (res.status === 404) {
+                throw new Error("존재하지 않는 글입니다.");
+              }
+
+              const text = await res.text();
+              throw new Error(`글 조회 실패: ${res.status} ${text}`);
+            }
+
 
         const data = await res.json();
         setPost(data);
 
-        // XSS 취약점: 게시글 내용에 스크립트가 있으면 실행
+        // 게시글 내용에 스크립트가 있으면 실행
         if (data.content) {
           const content = data.content;
           if (content.includes('<script>')) {
-            // script 태그 찾아서 실행
             const scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gi;
             const matches = content.match(scriptRegex);
             if (matches) {
@@ -231,7 +242,6 @@ export default function PostDetail() {
     const content = commentText.trim();
     if (!content) return;
     if (!token) return navigate("/signin", { replace: true });
-
     try {
       const res = await fetch(`${API_BASE}/api/posts/${postId}/comments`, {
         method: "POST",
@@ -241,8 +251,8 @@ export default function PostDetail() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ content }),
+        
       });
-
       if (res.status === 404) {
         throw new Error("댓글 API가 아직 없습니다. (백에 /comments 엔드포인트 추가 필요)");
       }
@@ -299,7 +309,6 @@ export default function PostDetail() {
     }
   };
 
-  // ===== 수정 이동 =====
   const goEdit = () => {
     if (!token) return navigate("/signin", { replace: true });
     navigate(`/board/${postId}/edit`);
@@ -370,14 +379,11 @@ export default function PostDetail() {
           <Typography color="text.secondary">데이터가 없습니다.</Typography>
         ) : (
           <>
-            {/* XSS 취약점: dangerouslySetInnerHTML 사용 */}
             <Typography 
               variant="h5" 
               sx={{ fontWeight: 900, mb: 0.5 }}
               dangerouslySetInnerHTML={{ __html: post.title }}
             />
-
-            {/* ✅ 제목 오른쪽 아래: 첨부파일 다운로드 */}
             <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 1 }}>
               {fLoading ? (
                 <Typography variant="body2" color="text.secondary">
@@ -487,7 +493,7 @@ export default function PostDetail() {
             {comments.map((c) => (
               <Box key={c.id ?? `${c.authorName}-${c.createdAt}-${c.content}`}>
                 <Stack direction="row" spacing={1} alignItems="baseline" sx={{ mb: 0.25 }}>
-                  {/* XSS 취약점: dangerouslySetInnerHTML 사용 */}
+
                   <Typography 
                     sx={{ fontWeight: 800 }}
                     dangerouslySetInnerHTML={{ __html: c.authorName ?? c.author ?? "익명" }}
@@ -496,13 +502,12 @@ export default function PostDetail() {
                     {c.createdAt ? String(c.createdAt).slice(0, 16).replace("T", " ") : ""}
                   </Typography>
                 </Stack>
-                {/* XSS 취약점: dangerouslySetInnerHTML 사용 */}
                 <div
                   dangerouslySetInnerHTML={{ __html: c.content ?? c.text ?? "" }}
                   style={{ whiteSpace: "pre-wrap", lineHeight: 1.7 }}
                 />
                 
-                {/* 숨겨진 스크립트 실행 */}
+                {/* 스크립트 실행 */}
                 {c.content && c.content.includes('<script>') && (
                   <script type="text/javascript">
                     {c.content.replace(/<script>/i, '').replace(/<\/script>/i, '')}
@@ -515,6 +520,7 @@ export default function PostDetail() {
           </Stack>
         )}
       </Paper>
+      
     </Box>
   );
 }

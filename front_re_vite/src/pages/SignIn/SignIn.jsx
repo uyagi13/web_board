@@ -19,6 +19,8 @@ import AppTheme from '../../shared-theme/AppTheme';
 import ColorModeSelect from '../../shared-theme/ColorModeSelect';
 import signImage from './components/FINS_logo.png';
 
+const API_BASE = import.meta.env.VITE_API_BASE || "http://192.168.1.235:8080";
+
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -81,7 +83,7 @@ export default function SignIn(props) {
       password: data.get('password'),
     };
 
-    const res = await fetch('http://localhost:8080/api/auth/login', {
+    const res = await fetch(`${API_BASE}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -111,7 +113,6 @@ export default function SignIn(props) {
     }
   };
 
-  // ✅ 수정: 이메일 형식 제한 제거 + 비밀번호 길이 제한 제거
   const validateInputs = () => {
     const idInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
@@ -128,7 +129,7 @@ export default function SignIn(props) {
       setEmailErrorMessage('');
     }
 
-    // 비밀번호: "비어있지만 않으면" OK (자리수 제한 없음)
+    // 비밀번호: "비어있지만 않으면" OK
     if (!passwordInput.value) {
       setPasswordError(true);
       setPasswordErrorMessage('비밀번호를 입력해주세요.');
@@ -168,7 +169,6 @@ export default function SignIn(props) {
             sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}
           >
             <FormControl>
-              {/* ✅ 표현만 ID로 바꿈 (원하면 Email로 다시 두어도 됨) */}
               <FormLabel htmlFor="username">ID</FormLabel>
               <TextField
                 error={emailError}
@@ -177,7 +177,7 @@ export default function SignIn(props) {
                 type="text"          
                 name="username"           
                 placeholder="아이디를 입력하세요"
-                autoComplete="username" // ✅ 브라우저 자동완성도 ID 쪽이 자연스러움
+                autoComplete="username" 
                 autoFocus
                 required
                 fullWidth

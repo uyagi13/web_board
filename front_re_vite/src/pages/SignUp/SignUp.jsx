@@ -19,6 +19,7 @@ import AppTheme from '../../shared-theme/AppTheme';
 import ColorModeSelect from '../../shared-theme/ColorModeSelect';
 import signImage from './components/FINS_logo.png';
 
+const API_BASE = import.meta.env.VITE_API_BASE || "http://192.168.1.235:8080";
 /* ===================== styled ===================== */
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -151,7 +152,7 @@ export default function SignUp(props) {
     };
 
     try {
-      const res = await fetch('http://localhost:8080/api/auth/signup', {
+      const res = await fetch(`${API_BASE}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // ✅ 반드시 선언
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8080';
+const API_BASE = import.meta.env.VITE_API_BASE ;
 
 const http = axios.create({
   baseURL: API_BASE,

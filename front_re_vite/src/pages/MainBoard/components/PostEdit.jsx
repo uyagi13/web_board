@@ -14,7 +14,9 @@ import Switch from "@mui/material/Switch";
 import Alert from "@mui/material/Alert";
 import CircularProgress from "@mui/material/CircularProgress";
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8080";
+const API_BASE =
+  import.meta.env.VITE_API_BASE ||
+  window.location.origin;
 
 function getMyIdFromToken(token) {
   if (!token) return null;
@@ -88,7 +90,6 @@ export default function PostEdit() {
         const data = await res.json();
         setPost(data);
 
-        // ✅ 폼 채우기 (필드명은 DTO에 맞춰 수정 가능)
         setTitle(data.title ?? "");
         setContent(data.content ?? "");
         setSecret(Boolean(data.secret));

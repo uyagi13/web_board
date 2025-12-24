@@ -41,25 +41,20 @@ function getRoleFromToken(token) {
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
 
-    // 프로젝트마다 클레임명이 다를 수 있어서 폭넓게 대응
     const role =
-      payload.role ||
-      (Array.isArray(payload.roles) ? payload.roles[0] : null) ||
-      (Array.isArray(payload.authorities) ? payload.authorities[0] : null);
+      payload.role ;
 
-    return role; // "ROLE_ADMIN" 또는 "ADMIN" 형태일 수 있음
+    return role; 
   } catch {
     return null;
   }
 }
 
 function ProtectedAdminRoute() {
-  // 너 프로젝트 저장 키에 맞춰 변경 가능
   const token =
-    localStorage.getItem("accessToken") ||
-    localStorage.getItem("token") ||
-    sessionStorage.getItem("accessToken") ||
-    sessionStorage.getItem("token");
+    localStorage.getItem("accessToken");
+
+
 
   const role = getRoleFromToken(token);
   const isAdmin = role === "ROLE_ADMIN" || role === "ADMIN";
@@ -80,10 +75,7 @@ export default function AdminDashboard(props) {
             {/* ✅ /admin 이하 전부 보호 */}
             <Route element={<ProtectedAdminRoute />}>
               <Route element={<AdminLayout />}>
-                {/* ✅ /admin 진입 시 대시보드로 */}
                 <Route index element={<Navigate to="dashboard" replace />} />
-
-                {/* ✅ 대시보드 */}
                 <Route path="dashboard" element={<AdminHome />} />
 
                 {/* 사용자 관리 */}
@@ -106,9 +98,6 @@ export default function AdminDashboard(props) {
                   <Route path=":fileId" element={<FileShow />} />
                   <Route path=":fileId/edit" element={<FileEdit />} />
                 </Route>
-
-
-                {/* fallback */}
                 <Route path="*" element={<Navigate to="dashboard" replace />} />
               </Route>
             </Route>

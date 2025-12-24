@@ -11,8 +11,9 @@ import Divider from "@mui/material/Divider";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import Alert from "@mui/material/Alert";
-
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8080";
+const API_BASE =
+  import.meta.env.VITE_API_BASE ||
+  window.location.origin;
 
 function formatBytes(bytes) {
   if (!Number.isFinite(bytes)) return "";
@@ -71,7 +72,6 @@ export default function PostWrite() {
     const res = await fetch(`${API_BASE}/api/files/posts/${postId}`, {
       method: "POST",
       headers: {
-        // FormData는 Content-Type 지정하면 안 됨 (브라우저가 boundary 붙임)
         Authorization: `Bearer ${token}`,
       },
       body: fd,
@@ -229,7 +229,6 @@ export default function PostWrite() {
             }}
           />
 
-          {/* ✅ 첨부파일 UI */}
           <Divider />
 
           <Stack spacing={1}>
